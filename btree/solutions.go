@@ -54,3 +54,61 @@ func helper(start, end int) []*TreeNode {
 	}
 	return allTrees
 }
+
+//[98] 验证二叉搜索树
+func isValidBST(root *TreeNode) bool {
+
+	return check(root, nil, nil)
+}
+
+func check(node, min, max *TreeNode) bool {
+	if node == nil {
+		return true
+	}
+	if min != nil && node.Val <= min.Val {
+		return false
+	}
+	if max != nil && node.Val >= max.Val {
+		return false
+	}
+
+	return check(node.Left, min, node) && check(node.Right, node, max)
+}
+
+//[103] 二叉树的锯齿形层次遍历
+func zigzagLevelOrder(root *TreeNode) [][]int {
+	result := make([][]int, 0)
+	if root == nil {
+		return result
+	}
+	result = zigzagLevelOrderDFS(root, 0, result)
+	return result
+}
+
+func zigzagLevelOrderDFS(node *TreeNode, level int, result [][]int) [][]int {
+	// if a new level
+	if level >= len(result) {
+		list := make([]int, 0)
+		list = append(list, node.Val)
+		result = append(result, list)
+	} else {
+		if level%2 == 0 {
+			result[level] = append(result[level], node.Val)
+		} else {
+			temp := make([]int, len(result[level])+1)
+			for i := len(result[level]); i > 0; i-- {
+				temp[i] = result[level][i-1]
+			}
+			temp[0] = node.Val
+			result[level] = temp
+		}
+	}
+
+	if node.Left != nil {
+		result = zigzagLevelOrderDFS(node.Left, level+1, result)
+	}
+	if node.Right != nil {
+		result = zigzagLevelOrderDFS(node.Right, level+1, result)
+	}
+	return result
+}
